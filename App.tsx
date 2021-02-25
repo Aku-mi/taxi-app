@@ -24,12 +24,28 @@ export default function App() {
       setText(
         `Lat: ${location.coords.latitude}\nLng: ${location.coords.longitude}\nTimeStamp: ${location.timestamp}`
       );
+    } else {
+      setText(errorMsg);
     }
   };
 
   const sendLocation = async () => {
     try {
       await fetch("http://akumi.me:13550", {
+        method: "post",
+        mode: "no-cors",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          lat: location?.coords.latitude,
+          lng: location?.coords.longitude,
+          tmp: location?.timestamp,
+        }),
+      });
+
+      await fetch("http://161.10.129.45:13550", {
         method: "post",
         mode: "no-cors",
         headers: {
