@@ -1,10 +1,8 @@
 import { storage } from "./storage";
 
-const base = "http://akumi.me:13550/api/";
-
 export const postData = async (url: string, data: {}) => {
   try {
-    const res = await fetch(base + url, {
+    const res = await fetch(url, {
       method: "post",
       credentials: "include",
       mode: "no-cors",

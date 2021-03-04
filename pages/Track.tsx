@@ -3,11 +3,11 @@ import * as Location from "expo-location";
 
 import { ILocation } from "../services/interfaces";
 import { postData } from "../services";
-import { storage } from "../services/storage";
+//import { storage } from "../services/storage";
 import { Btn, Main, Txt, MTxt } from "../Elements";
 
 export const Track: React.FC<any> = ({ navigation }) => {
-  if (!storage.token()) {
+  /*if (!storage.token()) {
     return (
       <Main>
         <Txt>Please Login!</Txt>
@@ -16,7 +16,7 @@ export const Track: React.FC<any> = ({ navigation }) => {
         </Btn>
       </Main>
     );
-  }
+  }*/
 
   const [location, setLocation] = useState<ILocation>({
     lat: 0,
@@ -48,38 +48,34 @@ export const Track: React.FC<any> = ({ navigation }) => {
       setText(
         `Lat: ${_location.coords.latitude}\nLng: ${_location.coords.longitude}\nTmp: ${_location.timestamp}`
       );
+      await sendLocation();
     } else {
       setText(errorMsg);
     }
   };
 
   const sendLocation = async () => {
-    const res = await postData(
-      `data/${storage.user().userName}/add`,
-      location as any
-    );
+    await postData("http://akumi.me/api/enviar-data", location as any);
+    await postData("http://msmpage.ddns.net/api/enviar-data", location as any);
   };
 
   useEffect(() => {
     if (enable) {
       const interval = setInterval(() => {
         (async () => await updateLocation())();
-        (async () => await sendLocation())();
-      }, 30000);
+      }, 2000);
       return () => clearInterval(interval);
     }
   }, [location, text, enable]);
 
   const Enable = async () => {
-    updateLocation();
-    sendLocation();
     setEnable((c) => !c);
   };
 
   return (
     <Main>
       <MTxt>{text}</MTxt>
-      <Btn onPress={async () => await Enable()}>
+      <Btn onPress={() => Enable()}>
         <Txt>{enable ? "Disable" : "Enable"}</Txt>
       </Btn>
       <Btn onPress={() => navigation.navigate("Home")}>
